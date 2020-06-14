@@ -1,31 +1,45 @@
-<?php
-error_reporting(E_ALL & ~E_NOTICE);
-require('php/database.php');
+<?php 
+  session_start(); 
 
-//maak databaseverbinding met de gegevens uit database.php
-$DBverbinding = mysqli_connect($servernaam, $gebruikersnaam, $wachtwoord, $database);
-// Controleer de verbinding
-if (!$DBverbinding) {
-// Geef de foutmelding die de server teruggeeft en stop met de uitvoer van PHP (die)
-die("Verbinding mislukt: " . mysqli_connect_error());
-}
-else {
-// Dit gedeelte laat je normaliter weg, maar is hier ter illustratie toegevoegd
-echo '<i>verbinding database succesvol</i>';
-}
+  if (!isset($_SESSION['username'])) {
+  	$_SESSION['msg'] = "You must log in first";
+  	header('location: login.php');
+  }
+  if (isset($_GET['logout'])) {
+  	session_destroy();
+  	unset($_SESSION['username']);
+  	header("location: login.php");
+  }
 ?>
 <!DOCTYPE html>
 <html>
-    <head>
-        <title>Startpagina</title>
-        <link rel="stylesheet" type="text/css" href="css/design.css">
-    </head>
-    <body>
-        <div id="container">
-            <h1>
-                <?php echo 'een <strong>klein</strong> stukje PHP';?>
-            </h1>
-            <img src="images/cartoon.jpg">
-        </div>
-    </body>
+<head>
+	<title>Home</title>
+	<link rel="stylesheet" type="text/css" href="css/design.css">
+</head>
+<body>
+
+<div class="header">
+	<h2>Home Page</h2>
+</div>
+<div class="content">
+  	<?php if (isset($_SESSION['success'])) : ?>
+      <div class="error success" >
+      	<h3>
+          <?php 
+          	echo $_SESSION['success']; 
+          	unset($_SESSION['success']);
+          ?>
+      	</h3>
+      </div>
+  	<?php endif ?>
+
+    <?php  if (isset($_SESSION['username'])) : ?>
+    	<h1>Welkom <strong><?php echo $_SESSION['username']; ?></strong></h1>
+    	<p> <a href="index.php?logout='1'" style="color: red;">Uitloggen</a> </p>
+        <p> <a href="Home.php" style="color: red;">Home</a> </p>
+    <?php endif ?>
+</div>
+		
+</body>
 </html>
